@@ -48,11 +48,11 @@ bool checkRow(Color** grid, int row) {
     return true;
 }
 
-void checkGrid(Color** grid) {
+int checkGrid(Color** grid) {
+    int cleared = 0;
     for (int row = 19; row >= 0; row--) {
-        cout << "Checking " << row << endl;
         if (checkRow(grid, row)) {
-            cout << "Its real " << row << endl;
+            cleared += 1;
             delete[] grid[row];
             for (int row2 = row; row > 0; row--) {
                 grid[row] = grid[row - 1];
@@ -61,8 +61,9 @@ void checkGrid(Color** grid) {
             for (int col = 0; col < 10; col++) {
                 grid[row][col] = Color {0, 0, 0, 255};
             }
-            checkGrid(grid);
+            cleared += checkGrid(grid);
             row++;
         }
     }
+    return cleared;
 }

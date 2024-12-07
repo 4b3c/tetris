@@ -40,10 +40,13 @@ int main() {
     int hat[7] = {0, 1, 2, 3, 4, 5, 6};
     shuffle(hat, 7);
     int counter = 0;
+    double speed = 0.4;
+    double score = 0;
 
     srand(timer);
     rand(); // Seems like this helps
     Shape* focus = new Shape(hat[counter++]);
+    score += 10;
     int x = 3;
     int y = 0;
 
@@ -64,6 +67,10 @@ int main() {
         ClearBackground(GRAY);
         drawGrid(grid);
         focus->draw(x, y);
+        
+        char scoreText[32];
+        sprintf(scoreText, "score: %.2f", score);
+        DrawText(scoreText, 400, 200, 60, BLACK);
 
         if (IsKeyPressed(KEY_RIGHT)) {
             if (locationOpen(grid, focus->cells, x + 1, y)) {
@@ -87,26 +94,48 @@ int main() {
                 }
                 delete[] rotated;
             }
+        } else if (IsKeyPressed(KEY_DOWN)) {
+            while (locationOpen(grid, focus->cells, x, y + 1)) {
+                y++;
+            }
         }
 
         // incrememnets the game state every 0.6 seconds
-        if (GetTime() > (timer + 0.2)) {
+        if (GetTime() > (timer + speed)) {
             timer = GetTime();
             if (locationOpen(grid, focus->cells, x, y + 1)) {
                 y++;
             } else {
                 addToGrid(grid, focus, x, y);
-                checkGrid(grid);
+                score += (100 * checkGrid(grid));
                 delete focus;
-                if (counter == 7) { shuffle(hat, 7); counter = 0;}
+                if (counter == 7) {
+                    shuffle(hat, 7);
+                    counter = 0;
+                    speed *= 0.9;
+                }
                 focus = new Shape(hat[counter++]);
+                score += 10;
                 x = 3;
                 y = 0;
+                if (!locationOpen(grid, focus->cells, x, y)) {
+                    break;
+                }
             }
         }
 
         EndDrawing();
 
+    }
+    while (!WindowShouldClose()) {
+        // draws things to the screen
+        BeginDrawing();
+        ClearBackground(GRAY);
+        DrawText("womp womp", 200, 200, 60, BLACK);
+        char scoreText[32];
+        sprintf(scoreText, "score: %.2f", score);
+        DrawText(scoreText, 200, 300, 40, BLACK);
+        EndDrawing();
     }
 
     CloseWindow();
