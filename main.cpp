@@ -20,16 +20,30 @@ void print(int** cells) {
     }
 }
 
+void shuffle(int* arr, int size) {
+    for (int i = 0; i < size*3; i++) {
+        int index1 = rand() % size;
+        int index2 = rand() % size;
+
+        int temp = arr[index2];
+        arr[index2] = arr[index1];
+        arr[index1] = temp;
+    }
+}
+
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(cellSize * 32, cellSize * 22, "Tetris");
 
-    double counter = GetTime();
+    double timer = GetTime();
+    int hat[7] = {0, 1, 2, 3, 4, 5, 6};
+    shuffle(hat, 7);
+    int counter = 0;
 
-    srand(counter);
+    srand(timer);
     rand(); // Seems like this helps
-    Shape* focus = new Shape(rand() % 7);
+    Shape* focus = new Shape(hat[counter++]);
     int x = 3;
     int y = 0;
 
@@ -76,14 +90,16 @@ int main() {
         }
 
         // incrememnets the game state every 0.6 seconds
-        if (GetTime() > (counter + 0.3)) {
-            counter = GetTime();
+        if (GetTime() > (timer + 0.2)) {
+            timer = GetTime();
             if (locationOpen(grid, focus->cells, x, y + 1)) {
                 y++;
             } else {
                 addToGrid(grid, focus, x, y);
+                checkGrid(grid);
                 delete focus;
-                focus = new Shape(rand() % 7);
+                if (counter == 7) { shuffle(hat, 7); counter = 0;}
+                focus = new Shape(hat[counter++]);
                 x = 3;
                 y = 0;
             }
@@ -95,7 +111,7 @@ int main() {
 
     CloseWindow();
 
-    // deallocates memory for the grid
+    // deallocates grid memory
     for (int row = 0; row < 20; row++) {
         delete[] grid[row];
     }

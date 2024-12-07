@@ -1,8 +1,11 @@
+#include <iostream>
 #include "utils.h"
 #define CLITERAL(type) type
 extern "C" {
     #include "raylib.h"
 }
+
+using namespace std;
 
 
 int gridToPixelX(int x) { return gridX + (x * cellSize); }
@@ -34,4 +37,32 @@ bool drawCell(int x, int y, Color color) {
     if (x < 0 || x > 9 || y < 0 || y > 19) { return false; }
     DrawRectangle(gridToPixelX(x), gridToPixelY(y), cellSize - 1, cellSize - 1, color);
     return true;
+}
+
+bool checkRow(Color** grid, int row) {
+    for (int col = 0; col < 10; col++) {
+        if (ColorIsEqual(grid[row][col], Color {0, 0, 0, 255})) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void checkGrid(Color** grid) {
+    for (int row = 19; row >= 0; row--) {
+        cout << "Checking " << row << endl;
+        if (checkRow(grid, row)) {
+            cout << "Its real " << row << endl;
+            delete[] grid[row];
+            for (int row2 = row; row > 0; row--) {
+                grid[row] = grid[row - 1];
+            }
+            grid[0] = new Color[10];
+            for (int col = 0; col < 10; col++) {
+                grid[row][col] = Color {0, 0, 0, 255};
+            }
+            checkGrid(grid);
+            row++;
+        }
+    }
 }

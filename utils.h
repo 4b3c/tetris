@@ -16,6 +16,8 @@ void initGrid(Color**);
 
 void drawGrid(Color**);
 bool drawCell(int, int, Color);
+bool checkRow(Color**);
+void checkGrid(Color**);
 
 
 #endif
