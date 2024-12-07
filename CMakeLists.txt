@@ -10,9 +10,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Find raylib (assumes Homebrew installed raylib)
 find_package(raylib REQUIRED)
 
-# Add the executable
-add_executable(Main main.cpp)
+# Add the executable and specify all source files
+add_executable(Main
+    main.cpp
+    utils.cpp
+    shapes.cpp
+)
 
 # Link raylib and system frameworks (macOS-specific)
 target_link_libraries(Main PRIVATE raylib)
 target_link_libraries(Main PRIVATE "-framework OpenGL -framework Cocoa -framework IOKit")
+
+# Include directories
+target_include_directories(Main PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
