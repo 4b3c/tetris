@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# use the -nf flag after creating a new file
+if [[ "$1" == "-nf" ]]; then
+    # Generate the build files if they don't exist
+    cmake -B build
+else
+    # Build the project
+    cmake --build build
+
+    # Run the built file
+    ./build/Main
+fi
