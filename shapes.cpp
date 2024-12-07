@@ -12,7 +12,6 @@ using namespace std;
 Shape::Shape(int type) {
     cout << "Creating shape of type: " << type << endl;
     shapeType = type;
-    color = shapeColors[shapeType];
 
     // Copy the selected shape into the cells array
     cells = new int*[4];
@@ -32,26 +31,24 @@ Shape::~Shape() {
     delete[] cells;
 }
 
-void Shape::draw(int x, int y) {
+void Shape::draw(int x, int y, Texture2D* textures) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
-            if (cells[row][col] == 1) {
-                drawCell(x + col, y + row, color);
+            if (cells[row][col] != 0) {
+                drawCell(x + col, y + row, textures[cells[row][col] - 1]);
             }
         }
     }
 };
 
-bool locationOpen(Color** grid, int** cells, int x, int y) {
+bool locationOpen(int** grid, int** cells, int x, int y) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
-            if (cells[row][col] == 1) {
+            if (cells[row][col] != 0) {
                 if (x + col < 0 || x + col > 9 || y + row > 19) {
-                    cout << "Not open 2: " << x << ", " << y << endl;
                     return false;
                 }
-                if (!ColorIsEqual(grid[y + row][x + col], Color {0, 0, 0, 255})) {
-                    cout << "Not open 1: " << grid[y + row][x + col].r << endl;
+                if (grid[y + row][x + col] != 0) {
                     return false;
                 }
             }
@@ -60,11 +57,11 @@ bool locationOpen(Color** grid, int** cells, int x, int y) {
     return true;
 };
 
-bool addToGrid(Color** grid, Shape* shape, int x, int y) {
+bool addToGrid(int** grid, Shape* shape, int x, int y) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
-            if (shape->cells[col][row] == 1) {
-                grid[y + col][x + row] = shape->color;
+            if (shape->cells[col][row] != 0) {
+                grid[y + col][x + row] = shape->cells[col][row];
             }
         }
     }

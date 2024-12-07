@@ -12,12 +12,11 @@ const int cellSize = 32;
 
 int gridToPixelX(int);
 int gridToPixelY(int);
-void initGrid(Color**);
 
-void drawGrid(Color**);
-bool drawCell(int, int, Color);
-bool checkRow(Color**);
-int checkGrid(Color**);
+void drawGrid(int**, Texture2D*);
+bool drawCell(int, int, Texture2D);
+bool checkRow(int**, int);
+int checkGrid(int**);
 
 
 #endif

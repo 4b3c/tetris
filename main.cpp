@@ -50,12 +50,23 @@ int main() {
     int x = 3;
     int y = 0;
 
+    Image image = LoadImage("shapes.png");
+    Texture2D textures[7];
+    for (int i = 0; i < 7; i++) {
+        float x_start = i * 8.0;
+        Image subImage = ImageFromImage(image, (Rectangle){x_start, 0.0, 8.0, 8.0});
+        textures[i] = LoadTextureFromImage(subImage);
+        UnloadImage(subImage);
+        SetTextureFilter(textures[i], TEXTURE_FILTER_POINT);
+    }
+    UnloadImage(image);
+
     // creates a 2d array of colors for our grid to store old shapes
-    Color** grid = new Color*[20];
+    int** grid = new int*[20];
     for (int row = 0; row < 20; row++) {
-        grid[row] = new Color[10];
+        grid[row] = new int[10];
         for (int col = 0; col < 10; col++) {
-            grid[row][col] = Color {0, 0, 0, 255};
+            grid[row][col] = 0;
         }
     }
 
@@ -65,8 +76,9 @@ int main() {
         BeginDrawing();
 
         ClearBackground(GRAY);
-        drawGrid(grid);
-        focus->draw(x, y);
+        drawGrid(grid, textures);
+        focus->draw(x, y, textures);
+        DrawFPS(500, 500);
         
         char scoreText[32];
         sprintf(scoreText, "score: %.2f", score);
@@ -115,6 +127,7 @@ int main() {
                     speed *= 0.9;
                 }
                 focus = new Shape(hat[counter++]);
+                print(focus->cells);
                 score += 10;
                 x = 3;
                 y = 0;
@@ -140,6 +153,10 @@ int main() {
 
     CloseWindow();
 
+    for (int i = 0; i < 7; i++) {
+        UnloadTexture(textures[i]);
+    }
+    
     // deallocates grid memory
     for (int row = 0; row < 20; row++) {
         delete[] grid[row];
