@@ -12,9 +12,10 @@ const int cellSize = 32;
 
 int gridToPixelX(int);
 int gridToPixelY(int);
+void initGrid(Color**);
 
-void drawGrid();
-void drawCell(int, int, Color);
+void drawGrid(Color**);
+bool drawCell(int, int, Color);
 
 
 #endif

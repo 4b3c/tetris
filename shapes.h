@@ -67,8 +67,6 @@ const Color shapeColors[7] = {
 class Shape {
 public:
     // Public member variables
-    int posX;
-    int posY;
     int shapeType;
     Color color;
     int cells[4][4];
@@ -76,9 +74,12 @@ public:
     // Constructor
     Shape(int type);
 
-    // Draw the shape on the screen
-    void draw();
+    void draw(int, int);
 
 };
+
+bool locationOpen(Color**, Shape, int, int);
+bool addToGrid(Color**, Shape, int, int);
+
 
 #endif
