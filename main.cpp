@@ -11,6 +11,16 @@ extern "C" {
 using namespace std;
 
 
+void print(int** cells) {
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            cout << cells[row][col] << ", ";
+        }
+        cout << endl;
+    }
+}
+
+
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(cellSize * 32, cellSize * 22, "Tetris");
@@ -19,7 +29,7 @@ int main() {
 
     srand(counter);
     rand(); // Seems like this helps
-    Shape focus = Shape(rand() % 7);
+    Shape* focus = new Shape(rand() % 7);
     int x = 3;
     int y = 0;
 
@@ -36,23 +46,50 @@ int main() {
     while (!WindowShouldClose()) {
         // draws things to the screen
         BeginDrawing();
-        ClearBackground(WHITE);
+
+        ClearBackground(GRAY);
         drawGrid(grid);
-        focus.draw(x, y);
-        EndDrawing();
+        focus->draw(x, y);
+
+        if (IsKeyPressed(KEY_RIGHT)) {
+            if (locationOpen(grid, focus->cells, x + 1, y)) {
+                x++;
+            }
+        } else if (IsKeyPressed(KEY_LEFT)) {
+            if (locationOpen(grid, focus->cells, x - 1, y)) {
+                x--;
+            }
+        } else if (IsKeyPressed(KEY_UP)) {
+            int** rotated = rotate(focus->cells);
+            if (locationOpen(grid, rotated, x, y)) {
+                for (int row = 0; row < 4; row++) {
+                    delete[] focus->cells[row];
+                }
+                delete focus->cells;
+                focus->cells = rotated;
+            } else {
+                for (int row = 0; row < 4; row++) {
+                    delete[] rotated[row];
+                }
+                delete[] rotated;
+            }
+        }
 
         // incrememnets the game state every 0.6 seconds
-        if (GetTime() > (counter + 0.2)) {
+        if (GetTime() > (counter + 0.3)) {
             counter = GetTime();
-            if (locationOpen(grid, focus, x, y + 1)) {
+            if (locationOpen(grid, focus->cells, x, y + 1)) {
                 y++;
             } else {
                 addToGrid(grid, focus, x, y);
-                focus = Shape(rand() % 7);
+                delete focus;
+                focus = new Shape(rand() % 7);
                 x = 3;
                 y = 0;
             }
         }
+
+        EndDrawing();
 
     }
 
@@ -63,6 +100,7 @@ int main() {
         delete[] grid[row];
     }
     delete[] grid;
+    delete focus;
 
     return 0;
 }

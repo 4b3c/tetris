@@ -69,17 +69,18 @@ public:
     // Public member variables
     int shapeType;
     Color color;
-    int cells[4][4];
+    int** cells;
 
-    // Constructor
+    // Constructor/Destructor
     Shape(int type);
+    ~Shape();
 
     void draw(int, int);
 
 };
 
-bool locationOpen(Color**, Shape, int, int);
-bool addToGrid(Color**, Shape, int, int);
-
+bool locationOpen(Color**, int** cells, int, int);
+bool addToGrid(Color**, Shape*, int, int);
+int** rotate(int**);
 
 #endif
